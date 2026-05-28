@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build outputs (biarkan Docker yang membinanya)
+dist/
+build/
+out/
+
+# Environment variables (SANGAT PENTING)
+.env
+.env.local
+.env.development
+.env.production
+
+# Git & IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+.DS_Store
