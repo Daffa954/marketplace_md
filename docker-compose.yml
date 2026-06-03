@@ -1,0 +1,13 @@
+services:
+  frontend-service:
+    image: dbigboss/marketplace_md:v1
+    container_name: frontend-service
+    networks:
+      - marketplace_net  # <-- Masukkan service ini ke jaringan
+    restart: unless-stopped
+    ports:
+      - "3003:80"
+
+networks:
+  marketplace_net:
+    external: true

@@ -21,6 +21,8 @@ export default function CheckoutPage() {
     total,
     isSubmitting,
     handlePlaceOrder,
+    qrCodeUrl,
+    deeplinkUrl,
     isCalculatingShipping
   } = useCheckout(product, quantity);
 
@@ -214,7 +216,43 @@ export default function CheckoutPage() {
 
           </div>
         </div>
+        
       </div>
+      {qrCodeUrl && (
+  <div className="mt-8 p-6 bg-white border border-green-200 rounded-xl shadow-lg max-w-sm mx-auto text-center animate-in fade-in zoom-in duration-300">
+    <h3 className="text-xl font-bold text-gray-800 mb-2">Scan untuk Bayar</h3>
+    <p className="text-sm text-gray-500 mb-4">
+      Silakan pindai QR Code di bawah menggunakan aplikasi Gojek, Tokopedia, Shopee, atau Mobile Banking Anda.
+    </p>
+    
+    {/* Wadah Gambar QR Code */}
+    <div className="inline-block p-4 bg-white rounded-lg border-2 border-dashed border-gray-200 mb-4">
+      <img 
+        src={qrCodeUrl} 
+        alt="GoPay QR Code" 
+        className="w-64 h-64 mx-auto object-contain"
+      />
+    </div>
+
+    <div className="text-md font-bold text-gray-700 mb-4">
+      Total Tagihan: <span className="text-[#00AA5B]">{formatRupiah(total)}</span>
+    </div>
+
+    {/* Tombol Deep Link untuk user yang buka di HP */}
+    {deeplinkUrl && (
+      <div className="block mt-2">
+        <a 
+          href={deeplinkUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block w-full bg-[#00AA5B] hover:bg-[#008f4c] text-white font-medium py-3 px-4 rounded-lg transition-colors"
+        >
+          Buka Aplikasi Gojek / Pembayaran
+        </a>
+      </div>
+    )}
+  </div>
+      )}
     </MainLayout>
   );
 }

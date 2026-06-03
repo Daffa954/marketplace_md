@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useAddress } from "../contexts/AddressContext"; // <-- Tambahkan ini
 
-
 export const useCheckout = (product: any, quantity: number) => {
   const navigate = useNavigate();
 
@@ -23,8 +22,11 @@ export const useCheckout = (product: any, quantity: number) => {
   const [selectedShippingCost, setSelectedShippingCost] = useState<number>(0);
   const [isCalculatingShipping, setIsCalculatingShipping] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [deeplinkUrl, setDeeplinkUrl] = useState<string | null>(null);
   // 1. Pastikan data profil dimuat
+  // ... (useEffect lainn
+
   useEffect(() => {
     if (!userProfile) fetchProfile();
   }, [userProfile, fetchProfile]);
@@ -147,21 +149,28 @@ export const useCheckout = (product: any, quantity: number) => {
 
   // Fungsi Submit Order
   // Fungsi Submit Order
- // Fungsi Submit Order
+  // Fungsi Submit Order
   const handlePlaceOrder = async () => {
-    if (!selectedAddressId) return alert("Pilih alamat pengiriman terlebih dahulu.");
-    if (selectedShippingCost === 0) return alert("Menunggu perhitungan ongkos kirim selesai.");
+    if (!selectedAddressId)
+      return alert("Pilih alamat pengiriman terlebih dahulu.");
+    if (selectedShippingCost === 0)
+      return alert("Menunggu perhitungan ongkos kirim selesai.");
 
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem("jwt_token");
 
       // 1. Dapatkan detail alamat yang dipilih
-      const selectedAddress = addresses.find((a: any) => a.id === selectedAddressId);
+      const selectedAddress = addresses.find(
+        (a: any) => a.id === selectedAddressId,
+      );
       if (!selectedAddress) throw new Error("Alamat tidak ditemukan");
 
       // 2. Dapatkan detail kurir
-      const selectedCourier = shippingOptions.find((opt: any) => (opt.cost || opt.value) === selectedShippingCost) || shippingOptions[0];
+      const selectedCourier =
+        shippingOptions.find(
+          (opt: any) => (opt.cost || opt.value) === selectedShippingCost,
+        ) || shippingOptions[0];
 
       // 3. Susun Payload
       const orderPayload = {
@@ -179,7 +188,10 @@ export const useCheckout = (product: any, quantity: number) => {
               name: selectedCourier?.name || "Kurir",
               service: selectedCourier?.service || "Reguler",
               cost: selectedShippingCost,
-              etd: selectedCourier?.description || selectedCourier?.etd || "2-3 hari",
+              etd:
+                selectedCourier?.description ||
+                selectedCourier?.etd ||
+                "2-3 hari",
             },
             items: [
               {
@@ -196,15 +208,18 @@ export const useCheckout = (product: any, quantity: number) => {
       };
 
       // 4. Tembak ke API Checkout
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/customer/checkout`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "x-service-password": import.meta.env.VITE_PASSWORD || "",
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/customer/checkout`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "x-service-password": import.meta.env.VITE_PASSWORD || "",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderPayload),
         },
-        body: JSON.stringify(orderPayload),
-      });
+      );
 
       const result = await response.json();
 
@@ -214,20 +229,25 @@ export const useCheckout = (product: any, quantity: number) => {
       }
 
       // 6. Notifikasi sukses membuat order dari database
-      alert(result.message || "Order berhasil dibuat! Anda akan dialihkan ke halaman pembayaran yang aman.");
+      alert(
+        result.message ||
+          "Order berhasil dibuat! Anda akan dialihkan ke halaman pembayaran yang aman.",
+      );
 
-      // 7. Ekstrak data Midtrans
-      const responseData = result.data?.data || result.data || result;
+      if (result.data.qrCodeUrl) {
+        // Simpan URL dari backend ke dalam state
+        setQrCodeUrl(result.data.qrCodeUrl);
+        setDeeplinkUrl(result.data.deeplinkUrl || null);
 
-      // 8. KARENA BACKEND TIDAK DIUBAH, KITA GUNAKAN REDIRECT (Link Pembayaran)
-      if (responseData.redirectUrl) {
-        // Alihkan user ke halaman resmi Midtrans
-        window.location.href = responseData.redirectUrl;
+        alert(
+          "Pesanan sukses dibuat! Silakan pindai QR Code GoPay untuk menyelesaikan pembayaran.",
+        );
       } else {
-        alert("Gagal memuat link pembayaran, pesanan Anda dapat dilihat di menu Profil.");
+        alert("Gagal mendapatkan link pembayaran GoPay.");
         navigate("/profile");
       }
 
+      console.log("Hasil Response Checkout:", result); // 💡 DEBUGGING
     } catch (error: any) {
       alert(error.message);
       console.error("Checkout Error:", error);
@@ -249,5 +269,7 @@ export const useCheckout = (product: any, quantity: number) => {
     isCalculatingShipping,
     shippingOptions,
     handlePlaceOrder,
+    qrCodeUrl,      // <-- Tambahkan ini
+  deeplinkUrl     // <-- Tambahkan ini
   };
 };
