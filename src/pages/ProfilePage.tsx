@@ -1,6 +1,7 @@
 // src/pages/User/ProfilePage.tsx
 import { Link } from "react-router-dom";
 import { useProfileData } from "../hooks/useProfileData";
+import { MainLayout } from "../components/layouts/MainLayout";
 
 export default function ProfilePage() {
   // Panggil semua state hanya dalam satu baris!
@@ -17,6 +18,7 @@ export default function ProfilePage() {
 
   // Handle tampilan utama (View murni)
   return (
+    <MainLayout>
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <h1 className="text-3xl font-bold text-gray-800 mb-8">Profil Saya</h1>
 
@@ -76,5 +78,6 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+    </MainLayout>
   );
 }

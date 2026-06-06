@@ -10,14 +10,15 @@ export interface SearchProduct {
   category?: { id: number; name: string };
 }
 
-export const useSearchData = (keyword: string | null) => {
+// Tambahkan parameter categoryId
+export const useSearchData = (keyword: string | null, categoryId: string | null) => {
   const [products, setProducts] = useState<SearchProduct[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Jika tidak ada keyword, jangan lakukan fetch
-    if (!keyword) {
+    // Jika tidak ada keyword DAN tidak ada categoryId, jangan fetch
+    if (!keyword && !categoryId) {
       setProducts([]);
       return;
     }
@@ -31,22 +32,27 @@ export const useSearchData = (keyword: string | null) => {
           "Content-Type": "application/json",
         };
 
-        // Memanggil API search yang ada di Laravel
-        const response = await fetch(
-          `${import.meta.env.VITE_API_URL}/products/search?keyword=${encodeURIComponent(keyword)}`,
-          { method: "GET", headers }
-        );
+        // 💡 LOGIKA PERCABANGAN API
+        let apiUrl = "";
+        
+        if (categoryId) {
+          // Jika URL memiliki ?category=1, tembak API filter kategori
+          apiUrl = `${import.meta.env.VITE_API_URL}/products/category/${categoryId}`;
+        } else if (keyword) {
+          // Jika URL memiliki ?q=baju, tembak API search standar
+          apiUrl = `${import.meta.env.VITE_API_URL}/products/search?keyword=${encodeURIComponent(keyword)}`;
+        }
 
+        const response = await fetch(apiUrl, { method: "GET", headers });
         const result = await response.json();
 
         if (!response.ok) {
-          throw new Error(result.message || "Gagal mengambil data pencarian");
+          throw new Error(result.message || "Gagal mengambil data produk");
         }
 
-        // Simpan data produk
         setProducts(result.data || []);
       } catch (err: any) {
-        console.error("Search Fetch Error:", err);
+        console.error("Fetch Error:", err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -54,7 +60,7 @@ export const useSearchData = (keyword: string | null) => {
     };
 
     fetchSearchData();
-  }, [keyword]); // Efek akan berjalan ulang setiap kali keyword URL berubah
+  }, [keyword, categoryId]); // Efek dipicu ulang jika salah satu parameter ini berubah
 
   return { products, isLoading, error };
 };

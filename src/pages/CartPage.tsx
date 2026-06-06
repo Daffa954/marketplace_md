@@ -1,5 +1,7 @@
+import { ChevronRight, Minus, Package, Plus, ShoppingBag, Store, Trash2 } from "lucide-react";
 import  { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { MainLayout } from "../components/layouts/MainLayout";
 
 // 1. Sesuaikan Interface dengan JSON aslimu
 interface CartItem {
@@ -122,92 +124,99 @@ export const CartPage = () => {
   if (error) return <div className="text-center text-red-500 p-10 mt-10">Error: {error}</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 mt-6">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Keranjang Belanja</h1>
+    <MainLayout>
+    <div className="max-w-6xl mx-auto px-4 py-10  min-h-screen">
+      <h1 className="text-3xl font-extrabold text-gray-900 mb-8 flex items-center gap-3">
+        <ShoppingBag className="w-8 h-8 text-blue-600" /> Keranjang Belanja
+      </h1>
 
       {cartItems.length === 0 ? (
-        <div className="text-center bg-gray-50 rounded-xl p-12 border border-gray-200">
-          <p className="text-gray-500 mb-4 text-lg">Keranjang Anda masih kosong 🛒</p>
+        <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-gray-100">
+          <div className="text-6xl mb-4">🛒</div>
+          <h2 className="text-2xl font-bold text-gray-800">Keranjang Masih Kosong</h2>
+          <p className="text-gray-500 mt-2 mb-6">Yuk, cari produk impianmu sekarang!</p>
           <button 
             onClick={() => navigate('/')} 
-            className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition"
+            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition"
           >
             Mulai Belanja
           </button>
         </div>
       ) : (
-        <div className="flex flex-col lg:flex-row gap-6">
+        <div className="grid lg:grid-cols-3 gap-8">
           
-          <div className="flex-1 space-y-4">
+          {/* Bagian List Produk */}
+          <div className="lg:col-span-2 space-y-4">
             {cartItems.map((item) => (
-              <div key={item.id} className="bg-white border rounded-lg p-4 flex flex-col sm:flex-row gap-4 items-start sm:items-center shadow-sm">
-                
-                {/* 4. PERBAIKAN: Render Gambar */}
-                <div className="w-20 h-20 bg-gray-100 rounded-md flex items-center justify-center text-gray-400 shrink-0 overflow-hidden border">
+              <div key={item.id} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex gap-4 transition-all hover:shadow-md">
+                {/* Gambar */}
+                <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
                   {item.product_image ? (
-                    <img 
-                      src={getImageUrl(item.product_image)} 
-                      alt={item.product_name} 
-                      className="w-full h-full object-cover" 
-                    />
-                  ) : "Foto"}
+                    <img src={getImageUrl(item.product_image)} alt={item.product_name} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400"><Package size={32}/></div>
+                  )}
                 </div>
 
+                {/* Info Produk */}
                 <div className="flex-1">
-                  <p className="text-xs text-gray-500 font-semibold uppercase">{item.shop_name}</p>
-                  <h3 className="font-bold text-gray-800 text-lg">{item.product_name}</h3>
-                  {/* 5. PERBAIKAN: Gunakan unit_price */}
-                  <p className="font-bold text-blue-600">Rp {item.unit_price.toLocaleString('id-ID')}</p>
+                  <div className="flex items-center gap-1 text-gray-500 text-xs font-medium uppercase tracking-wide mb-1">
+                    <Store size={14} /> {item.shop_name}
+                  </div>
+                  <h3 className="font-bold text-gray-900 text-lg">{item.product_name}</h3>
+                  <p className="text-blue-600 font-bold mt-2">Rp {item.unit_price.toLocaleString('id-ID')}</p>
                 </div>
 
-                <div className="flex flex-col items-end gap-3 w-full sm:w-auto">
-                  <div className="flex items-center border rounded-lg overflow-hidden">
-                    <button 
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition"
-                    >
-                      -
-                    </button>
-                    <span className="px-4 py-1 font-medium min-w-[3rem] text-center">{item.quantity}</span>
-                    <button 
-                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
-                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition"
-                    >
-                      +
-                    </button>
-                  </div>
-                  
+                {/* Kontrol */}
+                <div className="flex flex-col justify-between items-end">
                   <button 
                     onClick={() => handleRemoveItem(item.id)}
-                    className="text-sm text-red-500 hover:text-red-700 font-medium flex items-center gap-1"
+                    className="text-gray-400 hover:text-red-500 transition p-1"
                   >
-                    🗑️ Hapus
+                    <Trash2 size={20} />
                   </button>
+                  
+                  <div className="flex items-center bg-gray-100 rounded-lg p-1">
+                    <button 
+                      onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                      className="p-1.5 hover:bg-white rounded shadow-sm transition"
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <span className="px-4 font-semibold text-gray-700 min-w-[2.5rem] text-center">{item.quantity}</span>
+                    <button 
+                      onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                      className="p-1.5 hover:bg-white rounded shadow-sm transition"
+                    >
+                      <Plus size={16} />
+                    </button>
+                  </div>
                 </div>
-
               </div>
             ))}
           </div>
 
-          <div className="w-full lg:w-80 shrink-0">
-            <div className="bg-white border rounded-xl p-5 shadow-sm sticky top-24">
-              <h2 className="font-bold text-lg text-gray-800 mb-4 border-b pb-2">Ringkasan Belanja</h2>
+          {/* Sidebar Ringkasan */}
+          <div className="lg:col-span-1">
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-24">
+              <h2 className="font-bold text-lg text-gray-900 mb-5">Ringkasan Belanja</h2>
               
-              <div className="flex justify-between text-gray-600 mb-2">
-                <span>Total Harga ({cartItems.length} barang)</span>
-                <span>Rp {subtotalKeseluruhan.toLocaleString('id-ID')}</span>
-              </div>
-              
-              <div className="border-t mt-4 pt-4 flex justify-between items-center">
-                <span className="font-bold text-gray-800">Total Tagihan</span>
-                <span className="font-bold text-xl text-blue-600">Rp {subtotalKeseluruhan.toLocaleString('id-ID')}</span>
+              <div className="space-y-3 mb-6">
+                <div className="flex justify-between text-gray-600">
+                  <span>Total Produk</span> 
+                  <span>{cartItems.length}</span>
+                </div>
+                <div className="flex justify-between font-bold text-xl pt-4 border-t border-gray-100">
+                  <span>Total</span> 
+                  <span className="text-blue-600">Rp {subtotalKeseluruhan.toLocaleString('id-ID')}</span>
+                </div>
               </div>
 
               <button 
                 onClick={() => navigate('/checkout')} 
-                className="w-full mt-6 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700 transition shadow-md"
+                className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 hover:bg-blue-700 transition shadow-lg shadow-blue-200"
               >
-                Checkout Sekarang
+                Checkout Sekarang <ChevronRight size={20} />
               </button>
             </div>
           </div>
@@ -215,5 +224,6 @@ export const CartPage = () => {
         </div>
       )}
     </div>
+    </MainLayout>
   );
 };

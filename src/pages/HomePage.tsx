@@ -68,13 +68,8 @@ console.log(import.meta.env.VITE_PASSWORD)
                 className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 text-center hover:shadow-md transition cursor-pointer hover:border-[#00AA5B]"
               >
                 {/* Tampilkan gambar kategori jika ada, jika tidak biarkan teks saja */}
-                {category.image_url && (
-                  <img
-                    src={category.image_url}
-                    alt={category.name}
-                    className="w-12 h-12 mx-auto mb-3 object-contain"
-                  />
-                )}
+                
+               
                 <h3 className="font-semibold text-gray-700">{category.name}</h3>
               </div>
             ))}
@@ -126,7 +121,7 @@ console.log(import.meta.env.VITE_PASSWORD)
                       </p>
                       <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
                         <span className="truncate">
-                          {product.shop_name || "Toko UC"}
+                          {product.shop?.name|| "Toko UC"}
                         </span>
                       </p>
                     </div>

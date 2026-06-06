@@ -20,7 +20,7 @@ export const MyButton: React.FC<MyButtonProps> = ({
       type={type}
       onClick={onClick}
       disabled={isLoading}
-      className={`w-full py-2.5 px-4 bg-[#00AA5B] hover:bg-[#008F4C] text-white font-bold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
+      className={`w-full py-2.5 px-4 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
     >
       {isLoading ? 'Memproses...' : children}
     </button>

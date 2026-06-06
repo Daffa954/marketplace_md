@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useAddress } from "../contexts/AddressContext";
 import { InputField } from "../components/commons/inputFields";
 import { MyButton } from "../components/commons/button";
+import { MainLayout } from "../components/layouts/MainLayout";
 
 
 export default function AddAddressPage() {
@@ -92,6 +93,7 @@ export default function AddAddressPage() {
   };
 
   return (
+    <MainLayout>
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <div className="bg-white p-8 rounded-lg shadow-sm border border-gray-100">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Tambah Alamat Baru</h2>
@@ -174,5 +176,6 @@ export default function AddAddressPage() {
         </form>
       </div>
     </div>
+    </MainLayout>
   );
 }

@@ -14,6 +14,9 @@ export interface Product {
   price: number;
    product_image: string | null;
   shop_name?: string;
+  shop?: {
+    name: string;
+  };
 }
 
 export const useHomeData = () => {
