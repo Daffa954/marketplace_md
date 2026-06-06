@@ -13,6 +13,7 @@ import CheckoutPage from "./pages/CheckoutPage";
 import { OrderHistoryPage } from "./pages/OrderHistoryPage";
 import { OrderDetailPage } from "./pages/OrderDetailPage";
 import { CartPage } from "./pages/CartPage";
+import SearchPage from "./pages/searchPage";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
       <Route path="/seller" element={<SellerDashboardPage />} />
       <Route path="/seller/create-shop" element={<CreateShopPage />} />
       <Route path="/seller/products/add" element={<AddProductPage />} />
+      <Route path="/search" element={<SearchPage />} />
       <Route path="/seller/products" element={<SellerProductsPage />} />
     </Routes>
   );

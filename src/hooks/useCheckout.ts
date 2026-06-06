@@ -238,6 +238,7 @@ export const useCheckout = (product: any, quantity: number) => {
         // Simpan URL dari backend ke dalam state
         setQrCodeUrl(result.data.qrCodeUrl);
         setDeeplinkUrl(result.data.deeplinkUrl || null);
+        console.log("QR Code URL:", result.data.qrCodeUrl); // 💡 DEBUGGING
 
         alert(
           "Pesanan sukses dibuat! Silakan pindai QR Code GoPay untuk menyelesaikan pembayaran.",

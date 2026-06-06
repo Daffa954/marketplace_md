@@ -23,7 +23,7 @@ export default function CheckoutPage() {
     handlePlaceOrder,
     qrCodeUrl,
     deeplinkUrl,
-    isCalculatingShipping
+    isCalculatingShipping,
   } = useCheckout(product, quantity);
 
   // Jika user mengakses halaman ini langsung tanpa bawa data (langsung ketik URL /checkout)
@@ -160,20 +160,24 @@ export default function CheckoutPage() {
             {/* Kolom Kanan: Ringkasan Belanja */}
             <div className="lg:col-span-1">
               <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm sticky top-24">
-                <h2 className="text-lg font-semibold text-gray-800 mb-4">Ringkasan Belanja</h2>
-                
+                <h2 className="text-lg font-semibold text-gray-800 mb-4">
+                  Ringkasan Belanja
+                </h2>
+
                 <div className="space-y-3 mb-4 text-sm">
                   <div className="flex justify-between text-gray-600">
                     <span>Total Harga ({quantity} barang)</span>
                     <span>{formatRupiah(subtotal)}</span>
                   </div>
-                  
+
                   {/* ✅ PERBAIKAN: Menampilkan status Loading Ongkos Kirim Dinamis */}
                   <div className="flex justify-between text-gray-600">
                     <span>Total Ongkos Kirim</span>
                     <span>
                       {isCalculatingShipping ? (
-                        <span className="text-blue-500 animate-pulse font-medium">Menghitung...</span>
+                        <span className="text-blue-500 animate-pulse font-medium">
+                          Menghitung...
+                        </span>
                       ) : shippingCost > 0 ? (
                         formatRupiah(shippingCost)
                       ) : (
@@ -185,7 +189,9 @@ export default function CheckoutPage() {
 
                 <div className="border-t border-gray-200 pt-4 mb-6">
                   <div className="flex justify-between items-center">
-                    <span className="font-bold text-gray-800">Total Tagihan</span>
+                    <span className="font-bold text-gray-800">
+                      Total Tagihan
+                    </span>
                     <span className="font-bold text-xl text-[#00AA5B]">
                       {isCalculatingShipping ? "..." : formatRupiah(total)}
                     </span>
@@ -195,9 +201,17 @@ export default function CheckoutPage() {
                 {/* ✅ Tombol Disabled jika ongkir belum selesai dihitung */}
                 <button
                   onClick={handlePlaceOrder}
-                  disabled={isSubmitting || !selectedAddressId || isCalculatingShipping || shippingCost === 0}
+                  disabled={
+                    isSubmitting ||
+                    !selectedAddressId ||
+                    isCalculatingShipping ||
+                    shippingCost === 0
+                  }
                   className={`w-full py-3 rounded-lg font-bold text-white transition duration-200 ${
-                    isSubmitting || !selectedAddressId || isCalculatingShipping || shippingCost === 0
+                    isSubmitting ||
+                    !selectedAddressId ||
+                    isCalculatingShipping ||
+                    shippingCost === 0
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-[#00AA5B] hover:bg-[#008f4c] shadow-md shadow-green-100"
                   }`}
@@ -206,52 +220,66 @@ export default function CheckoutPage() {
                 </button>
 
                 {!selectedAddressId && (
-                  <p className="text-red-500 text-xs mt-2 text-center">Pilih alamat pengiriman terlebih dahulu.</p>
+                  <p className="text-red-500 text-xs mt-2 text-center">
+                    Pilih alamat pengiriman terlebih dahulu.
+                  </p>
                 )}
-                {(selectedAddressId && shippingCost === 0 && !isCalculatingShipping) && (
-                  <p className="text-red-500 text-xs mt-2 text-center">Gagal menghitung ongkos kirim.</p>
-                )}
+                {selectedAddressId &&
+                  shippingCost === 0 &&
+                  !isCalculatingShipping && (
+                    <p className="text-red-500 text-xs mt-2 text-center">
+                      Gagal menghitung ongkos kirim.
+                    </p>
+                  )}
               </div>
             </div>
-
           </div>
         </div>
-        
       </div>
       {qrCodeUrl && (
-  <div className="mt-8 p-6 bg-white border border-green-200 rounded-xl shadow-lg max-w-sm mx-auto text-center animate-in fade-in zoom-in duration-300">
-    <h3 className="text-xl font-bold text-gray-800 mb-2">Scan untuk Bayar</h3>
-    <p className="text-sm text-gray-500 mb-4">
-      Silakan pindai QR Code di bawah menggunakan aplikasi Gojek, Tokopedia, Shopee, atau Mobile Banking Anda.
-    </p>
-    
-    {/* Wadah Gambar QR Code */}
-    <div className="inline-block p-4 bg-white rounded-lg border-2 border-dashed border-gray-200 mb-4">
-      <img 
-        src={qrCodeUrl} 
-        alt="GoPay QR Code" 
-        className="w-64 h-64 mx-auto object-contain"
-      />
-    </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full text-center relative animate-in zoom-in-95 duration-300">
+            {/* Tombol Close (Opsional) */}
+            <button
+              onClick={() => window.location.reload()} // Reset halaman untuk menutup modal
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
 
-    <div className="text-md font-bold text-gray-700 mb-4">
-      Total Tagihan: <span className="text-[#00AA5B]">{formatRupiah(total)}</span>
-    </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">
+              Scan untuk Bayar
+            </h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Silakan pindai QR Code di bawah menggunakan aplikasi pembayaran
+              Anda.
+            </p>
 
-    {/* Tombol Deep Link untuk user yang buka di HP */}
-    {deeplinkUrl && (
-      <div className="block mt-2">
-        <a 
-          href={deeplinkUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block w-full bg-[#00AA5B] hover:bg-[#008f4c] text-white font-medium py-3 px-4 rounded-lg transition-colors"
-        >
-          Buka Aplikasi Gojek / Pembayaran
-        </a>
-      </div>
-    )}
-  </div>
+            <div className="inline-block p-4 bg-white rounded-lg border-2 border-dashed border-gray-200 mb-4">
+              <img
+                src={qrCodeUrl}
+                alt="GoPay QR Code"
+                className="w-64 h-64 mx-auto object-contain"
+              />
+            </div>
+
+            <div className="text-md font-bold text-gray-700 mb-4">
+              Total Tagihan:{" "}
+              <span className="text-[#00AA5B]">{formatRupiah(total)}</span>
+            </div>
+
+            {deeplinkUrl && (
+              <a
+                href={deeplinkUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-[#00AA5B] hover:bg-[#008f4c] text-white font-medium py-3 px-4 rounded-lg transition-colors"
+              >
+                Buka Aplikasi Pembayaran
+              </a>
+            )}
+          </div>
+        </div>
       )}
     </MainLayout>
   );
